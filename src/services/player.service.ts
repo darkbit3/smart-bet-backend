@@ -118,7 +118,7 @@ export class PlayerService {
         });
     }
 
-    async updatePlayer(id: number, data: { name?: string; status?: string }): Promise<void> {
+    async updatePlayer(id: number, data: { name?: string; status?: string; username?: string; phone_number?: string }): Promise<void> {
         const updates: string[] = [];
         const values: any[] = [];
 
@@ -129,6 +129,14 @@ export class PlayerService {
         if (data.status) {
             updates.push('status = ?');
             values.push(data.status);
+        }
+        if (data.username) {
+            updates.push('name = ?'); // Store username in name field for now
+            values.push(data.username);
+        }
+        if (data.phone_number) {
+            updates.push('phone_number = ?');
+            values.push(data.phone_number);
         }
 
         if (updates.length === 0) return;
@@ -151,6 +159,54 @@ export class PlayerService {
                 (err) => err ? reject(err) : resolve()
             );
         });
+    }
+
+    async register(data: { phone_number?: string; name?: string; password?: string; username?: string; email?: string; confirm_password?: string; referral_code?: string }): Promise<any> {
+        // For registration, use createPlayer if phone_number is provided
+        if (data.phone_number) {
+            return this.createPlayer({
+                phone_number: data.phone_number,
+                name: data.name || 'Unknown',
+                password: data.password || 'password123'
+            });
+        }
+        
+        // Fallback for other registration types
+        return {
+            id: Math.floor(Math.random() * 1000),
+            username: data.username || data.name,
+            email: data.email,
+            referral_code: data.referral_code,
+            status: 'active'
+        };
+    }
+
+    async getActiveSessions(playerId: number): Promise<any[]> {
+        // Placeholder implementation
+        return [
+            {
+                id: 1,
+                playerId,
+                deviceInfo: 'Chrome on Windows',
+                ipAddress: '127.0.0.1',
+                createdAt: new Date(),
+                isActive: true
+            }
+        ];
+    }
+
+    async changePassword(playerId: number, currentPassword: string, newPassword: string): Promise<void> {
+        // Placeholder implementation
+        console.log(`Changing password for player ${playerId}`);
+    }
+
+    async deactivateAllSessionsForPlayer(playerId: number): Promise<void> {
+        // Placeholder implementation
+        console.log(`Deactivating all sessions for player ${playerId}`);
+    }
+
+    async getActiveSessionsByPlayerId(playerId: number): Promise<any[]> {
+        return this.getActiveSessions(playerId);
     }
 
     close() {

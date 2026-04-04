@@ -52,14 +52,14 @@ export class CashoutAgentService {
               `INSERT INTO cashout_agent (withdraw_player, amount, cashier_name, cashier_code, status)
                VALUES (?, ?, ?, ?, 'pending')`,
               [cashoutData.withdraw_player, cashoutData.amount, cashoutData.cashier_name, generatedCode],
-              function(err) {
+              (err, result) => {
                 if (err) {
                   console.error('Error inserting cashout request:', err);
                   reject({ success: false, message: 'Failed to create cashout request' });
                   return;
                 }
 
-                const cashoutId = this.lastID;
+                const cashoutId = result.lastID;
 
                 // Update player balance (decrease withdrawable)
                 const newWithdrawable = player.withdrawable - cashoutData.amount;
@@ -70,7 +70,7 @@ export class CashoutAgentService {
                    SET withdrawable = ?, balance = ?, updated_at = CURRENT_TIMESTAMP
                    WHERE phone_number = ?`,
                   [newWithdrawable, newTotalBalance, cashoutData.withdraw_player],
-                  function(err) {
+                  (err) => {
                     if (err) {
                       console.error('Error updating player balance:', err);
                       reject({ success: false, message: 'Failed to update player balance' });
@@ -82,7 +82,7 @@ export class CashoutAgentService {
                       `INSERT INTO transactions (phone_number, amount, type, status, reference, created_at)
                        VALUES (?, ?, 'withdrawal', 'pending', ?, CURRENT_TIMESTAMP)`,
                       [cashoutData.withdraw_player, cashoutData.amount, 'cashout_agent'],
-                      function(err) {
+                      (err) => {
                         if (err) {
                           console.error('Error creating transaction:', err);
                           // Don't reject - cashout was created successfully
@@ -236,7 +236,7 @@ export class CashoutAgentService {
               this.db.run(
                 'UPDATE cashout_agent SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
                 ['completed', cashoutId],
-                function(err) {
+                (err) => {
                   if (err) {
                     console.error('Error updating cashout status to completed:', err);
                     reject({ success: false, message: 'Failed to complete cashout' });
@@ -249,7 +249,7 @@ export class CashoutAgentService {
                      SET status = 'completed', new_balance = ?, updated_at = CURRENT_TIMESTAMP
                      WHERE phonenumber = ? AND status = 'pending'`,
                     [player.balance, cashout.withdraw_player],
-                    function(err) {
+                    (err) => {
                       if (err) {
                         console.error('Error updating transaction status:', err);
                         // Don't reject - cashout was completed
