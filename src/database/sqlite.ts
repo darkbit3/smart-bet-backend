@@ -1,5 +1,4 @@
 import sqlite3 from 'sqlite3';
-import { config } from '@/config';
 import { logger } from '@/utils/logger';
 import path from 'path';
 
