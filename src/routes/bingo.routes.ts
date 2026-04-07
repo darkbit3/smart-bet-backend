@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { BingoController } from '@/controllers/web/bingo.controller';
 
 const router = Router();
 
@@ -10,5 +11,11 @@ router.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Handle player connection from smart bet bingo page
+router.post('/player-connect', BingoController.handlePlayerConnect);
+
+// Get bingo system status
+router.get('/status', BingoController.getBingoStatus);
 
 export default router;

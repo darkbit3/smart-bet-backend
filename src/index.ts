@@ -38,24 +38,36 @@ class Application {
      * ✅ FIXED CORS CONFIG
      */
     const allowedOrigins = [
-      'http://localhost:5173',  // Web app
+      ...config.cors.origins,
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175',
+      'http://localhost:5176',
       'http://127.0.0.1:5173',
-      'http://localhost:5174',  // Cashier app
       'http://127.0.0.1:5174',
-      'http://localhost:5175',  // Admin app
       'http://127.0.0.1:5175',
-      'http://localhost:5176',  // Admin app (current port)
       'http://127.0.0.1:5176',
-      'http://localhost:3000',  // Additional dev servers
-      'http://127.0.0.1:3000'
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'https://smart-bet-cashier.onrender.com',
+      'https://smart-bet-admin.onrender.com',
+      'https://smart-gp9rs1r92-kaleabs-projects-1bd541ea.vercel.app',
+      'https://smart-bet-chi.vercel.app'
     ];
 
     this.app.use(cors({
       origin: (origin, callback) => {
-        // allow requests with no origin (like Postman)
+        // Allow requests with no origin (like Postman or mobile apps)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.includes(origin)) {
+        // Check if origin is allowed
+        const isAllowed = allowedOrigins.some(allowed =>
+          allowed === origin ||
+          (allowed.includes('localhost') && origin.includes('localhost')) ||
+          (allowed.includes('127.0.0.1') && origin.includes('127.0.0.1'))
+        );
+
+        if (isAllowed) {
           return callback(null, true);
         } else {
           logger.warn(`❌ CORS blocked origin: ${origin}`);
@@ -64,7 +76,7 @@ class Application {
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token', 'X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection'],
     }));
 
     /**
@@ -125,6 +137,7 @@ class Application {
      * 🆕 New organized routes
      */
     this.app.use('/api', routes);
+    this.app.use('/api/web', routes); // Alias for web frontend
     this.app.use('/api/cashier', cashierRoutes);
 
     /**
@@ -194,7 +207,7 @@ class Application {
       try {
         await dbManager.connect();
         logger.info(`Database connected successfully`);
-        
+
         // Update cashout agent routes with database connection
         if (this.cashoutAgentRoutes && this.cashoutAgentRoutes.setDatabase) {
           this.cashoutAgentRoutes.setDatabase(dbManager.getSQLite().getRawDatabase());
@@ -220,7 +233,7 @@ class Application {
 
   public async shutdown(): Promise<void> {
     logger.info('Shutting down gracefully...');
-    
+
     this.server.close(() => {
       logger.info('HTTP server closed');
       process.exit(0);

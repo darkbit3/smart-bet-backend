@@ -71,7 +71,7 @@ interface Config {
 
 export const config: Config = {
   env,
-  port: parseInt(process.env.PORT || '3000', 10),
+  port: parseInt(process.env.PORT || '5000', 10),
   host: process.env.HOST || 'localhost',
   
   database: {
@@ -101,7 +101,7 @@ export const config: Config = {
   },
   
   cors: {
-    origins: (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:5174,http://localhost:3000').split(','),
+    origins: (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:5001,http://localhost:3000,https://smart-bet-admin.onrender.com').split(','),
   },
   
   logging: {
