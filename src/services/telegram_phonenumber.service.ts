@@ -232,7 +232,7 @@ export class TelegramPhoneNumberService {
       }
 
       // Send to telegram bot webhook
-      const response = await fetch('http://localhost:3001/notify', {
+      const response = await fetch('http://localhost:3004/notify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

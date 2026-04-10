@@ -52,7 +52,8 @@ class Application {
       'https://smart-bet-cashier.onrender.com',
       'https://smart-bet-admin.onrender.com',
       'https://smart-gp9rs1r92-kaleabs-projects-1bd541ea.vercel.app',
-      'https://smart-bet-chi.vercel.app'
+      'https://smart-bet-chi.vercel.app',
+      'https://smart-bet-owof.onrender.com'
     ];
 
     this.app.use(cors({
