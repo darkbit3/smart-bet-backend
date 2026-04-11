@@ -7,15 +7,16 @@
     "outDir": "./dist",
     "rootDir": "./src",
 
-    "baseUrl": ".",                          // ✅ FIXED (IMPORTANT)
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]                       // ✅ FIXED (IMPORTANT)
+      "@/*": ["src/*"]
     },
 
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
-    "skipLibCheck": true,                    // ✅ FIX node_modules errors
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
     "strict": false,
@@ -36,7 +37,7 @@
   "include": ["src/**/*"],
 
   "exclude": [
-    "node_modules",                          // ✅ VERY IMPORTANT
+    "node_modules",
     "dist",
     "tests"
   ]
